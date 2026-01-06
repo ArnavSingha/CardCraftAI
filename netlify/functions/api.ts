@@ -45,7 +45,19 @@ const generateMarketingCardFlow = ai.defineFlow(
 // Netlify Function handler
 export default async (req: Request, context: Context) => {
   const url = new URL(req.url);
-  const path = url.pathname.replace('/.netlify/functions/api', '');
+  // Handle both direct function calls and redirected /api/* calls
+  let path = url.pathname;
+  if (path.startsWith('/.netlify/functions/api')) {
+    path = path.replace('/.netlify/functions/api', '');
+  } else if (path.startsWith('/api')) {
+    path = path.replace('/api', '');
+  }
+  // Ensure path starts with / or is empty
+  if (!path) path = '/';
+  
+  console.log('Request URL:', req.url);
+  console.log('Parsed path:', path);
+  console.log('Method:', req.method);
 
   // CORS headers
   const headers = {
@@ -60,13 +72,18 @@ export default async (req: Request, context: Context) => {
     return new Response(null, { status: 204, headers });
   }
 
+  // Root path - health check
+  if ((path === '/' || path === '') && req.method === 'GET') {
+    return new Response(JSON.stringify({ status: 'ok', path }), { headers });
+  }
+
   // Health check endpoint
   if (path === '/health' && req.method === 'GET') {
     return new Response(JSON.stringify({ status: 'ok' }), { headers });
   }
 
   // Generate marketing card endpoint
-  if (path === '/generate-marketing-card' && req.method === 'POST') {
+  if ((path === '/generate-marketing-card' || path === 'generate-marketing-card') && req.method === 'POST') {
     try {
       const body = await req.json();
       const { productName, category } = body;
