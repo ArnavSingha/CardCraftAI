@@ -6,7 +6,7 @@ A React application for generating AI-powered marketing cards for products. Ente
 
 ## 🌐 Live Demo
 
-> 🔗 **[View Live Demo](https://your-deployment-url.com)** <!-- Replace with your actual deployment URL -->
+> 🔗 **[View Live Demo](https://cardcraftai0.netlify.app/)** <!-- Replace with your actual deployment URL -->
 
 ## ✨ Features
 
